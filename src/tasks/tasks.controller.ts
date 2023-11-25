@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -29,6 +30,11 @@ export class TasksController {
     return this.tasksService.createTask(createTaskDto);
   }
 
+  @Delete(":id")
+  async deleteTaskById(@Param("id", ParseIntPipe) id: number): Promise<void> {
+    await this.tasksService.deleteTaskById(id);
+  }
+
   /*
   @Get()
   getTasks(@Query(ValidationPipe) filterDto: getTaskFilterDto): Task[] {
@@ -48,10 +54,7 @@ export class TasksController {
     return this.tasksService.updateTaskStatus(parseInt(id), status);
   }
 
-  @Delete(":id")
-  deleteTaskById(@Param("id") id: string): void {
-    this.tasksService.deleteTaskById(parseInt(id));
-  }
+ 
 
 
   */
