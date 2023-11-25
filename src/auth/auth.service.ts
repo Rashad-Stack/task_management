@@ -22,8 +22,8 @@ export class AuthService {
       const user = new User();
       user.username = username;
       user.password = await this.hashPassword(password);
-      console.log(user.password);
-      // await user.save();
+
+      await user.save();
     } catch (error) {
       if (error.code === "23505") {
         throw new ConflictException("Username already exists");
