@@ -23,5 +23,7 @@ module.exports = {
     "@typescript-eslint/no-explicit-any": "off",
     "prettier/prettier": ["off", { endOfLine: "auto" }],
     "no-console": "warn",
+    "no-unused-vars": "warn",
+    "@typescript-eslint/no-unused-vars": ["warn"],
   },
 };
