@@ -1,4 +1,5 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
+import { Task } from "./task.entity";
 import { TasksService } from "./tasks.service";
 
 @Controller("tasks")
@@ -6,6 +7,12 @@ export class TasksController {
   constructor(private tasksService: TasksService) {
     this.tasksService = tasksService;
   }
+
+  @Get(":id")
+  async getTaskById(@Param("id", ParseIntPipe) id: number): Promise<Task> {
+    return await this.tasksService.getTaskById(id);
+  }
+
   /*
   @Get()
   getTasks(@Query(ValidationPipe) filterDto: getTaskFilterDto): Task[] {
@@ -15,10 +22,7 @@ export class TasksController {
     return this.tasksService.getAllTasks();
   }
 
-  @Get(":id")
-  getTaskById(@Param("id") id: string): Task {
-    return this.tasksService.getTaskById(parseInt(id));
-  }
+
 
   @Patch(":id")
   updateTaskStatus(
