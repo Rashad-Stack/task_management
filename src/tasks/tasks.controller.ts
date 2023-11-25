@@ -12,7 +12,7 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import { CreateTaskDto } from "./dto/create-task.dto";
-import { getTaskFilterDto } from "./dto/get-task-filter.dto";
+import { GetTaskFilterDto } from "./dto/get-task-filter.dto";
 import { TaskStatusValidationPipe } from "./pipes/task-status-validation.pipe";
 import { TaskStatus } from "./task-status.enum";
 import { Task } from "./task.entity";
@@ -50,11 +50,8 @@ export class TasksController {
 
   @Get()
   getTasks(
-    @Query(ValidationPipe) filterDto: getTaskFilterDto,
+    @Query(ValidationPipe) filterDto: GetTaskFilterDto,
   ): Promise<Task[]> {
-    if (Object.keys(filterDto).length) {
-      return null;
-    }
-    return this.tasksService.getAllTasks();
+    return this.tasksService.getAllTasks(filterDto);
   }
 }
