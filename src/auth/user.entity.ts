@@ -1,3 +1,4 @@
+import * as bcrypt from "bcryptjs";
 import { Exclude } from "class-transformer";
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
@@ -12,4 +13,8 @@ export class User extends BaseEntity {
   @Column()
   @Exclude()
   password: string;
+
+  async validatePassword(password: string): Promise<boolean> {
+    return await bcrypt.compare(password, this.password);
+  }
 }
