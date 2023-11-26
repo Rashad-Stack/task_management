@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   UnauthorizedException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
@@ -17,6 +18,7 @@ export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     private jwtService: JwtService,
+    private logger: Logger,
   ) {}
 
   async signUp(authDto: AuthCredentialsDto): Promise<void> {
@@ -32,14 +34,14 @@ export class AuthService {
       if (error.code === "23505") {
         throw new ConflictException("Username already exists");
       } else {
-        throw new InternalServerErrorException(error);
+        this.logger.error(error.stack);
+        throw new InternalServerErrorException();
       }
     }
   }
 
   async signing(authDto: AuthCredentialsDto): Promise<{ accessToken: string }> {
     const { username, password } = authDto;
-
     const user = await this.userRepository.findOneBy({ username });
 
     if (!user || !(await user.validatePassword(password))) {

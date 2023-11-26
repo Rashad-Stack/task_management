@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/auth/user.entity";
 import { Repository } from "typeorm";
@@ -12,12 +17,11 @@ export class TasksService {
   constructor(
     @InjectRepository(Task)
     private taskRepository: Repository<Task>,
+    private logger: Logger,
   ) {}
   async getTaskById(id: number, user: User): Promise<Task | null> {
     const task = await this.taskRepository.findOneBy({ id, userId: user.id });
-
     if (!task) throw new NotFoundException(`Task with ID ${id} not found`);
-
     return task;
   }
 
@@ -28,9 +32,15 @@ export class TasksService {
     task.title = title;
     task.description = description;
     task.user = user;
-    await task.save();
-    delete task.user;
-    return task;
+
+    try {
+      await task.save();
+      delete task.user;
+      return task;
+    } catch (error) {
+      this.logger.error(error.stack);
+      throw new InternalServerErrorException();
+    }
   }
 
   async deleteTaskById(id: number, user: User): Promise<void> {
@@ -44,10 +54,15 @@ export class TasksService {
     status: TaskStatus,
     user: User,
   ): Promise<Task> {
-    const task = await this.getTaskById(id, user);
-    task.status = status;
-    await task.save();
-    return task;
+    try {
+      const task = await this.getTaskById(id, user);
+      task.status = status;
+      await task.save();
+      return task;
+    } catch (error) {
+      this.logger.error(error.stack);
+      throw new InternalServerErrorException();
+    }
   }
 
   async getAllTasks(filterDto: GetTaskFilterDto, user: User): Promise<Task[]> {
@@ -67,7 +82,12 @@ export class TasksService {
       query.andWhere("task.status = :status", { status });
     }
 
-    const tasks = await query.getMany();
-    return tasks;
+    try {
+      const tasks = await query.getMany();
+      return tasks;
+    } catch (error) {
+      this.logger.error(error.stack);
+      throw new InternalServerErrorException();
+    }
   }
 }
