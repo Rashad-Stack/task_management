@@ -4,6 +4,7 @@ import { User } from "src/auth/user.entity";
 import { Repository } from "typeorm";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { GetTaskFilterDto } from "./dto/get-task-filter.dto";
+import { TaskStatus } from "./task-status.enum";
 import { Task } from "./task.entity";
 
 @Injectable()
@@ -38,12 +39,16 @@ export class TasksService {
       throw new NotFoundException(`Task with ID ${id} not found`);
   }
 
-  // async updateTaskStatus(id: number, status: TaskStatus): Promise<Task> {
-  //   const task = await this.getTaskById(id);
-  //   task.status = status;
-  //   await task.save();
-  //   return task;
-  // }
+  async updateTaskStatus(
+    id: number,
+    status: TaskStatus,
+    user: User,
+  ): Promise<Task> {
+    const task = await this.getTaskById(id, user);
+    task.status = status;
+    await task.save();
+    return task;
+  }
 
   async getAllTasks(filterDto: GetTaskFilterDto, user: User): Promise<Task[]> {
     const { status, search } = filterDto;
