@@ -1,0 +1,8 @@
+db:
+  host: localhost
+  password: postgres
+  username: postgres
+  sychronize: true
+
+jwt:
+  secret: wuFOHws0vve4/ME6YfeUfBc/NrXoE8iFbZOckpxizhw=
