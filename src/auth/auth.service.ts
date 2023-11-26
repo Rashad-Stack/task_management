@@ -42,7 +42,7 @@ export class AuthService {
 
     const user = await this.userRepository.findOneBy({ username });
 
-    if (user && !(await user.validatePassword(password))) {
+    if (!user || !(await user.validatePassword(password))) {
       throw new UnauthorizedException("Invalid credentials");
     }
 
